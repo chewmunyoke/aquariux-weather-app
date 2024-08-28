@@ -19,6 +19,20 @@ const config: Config = {
       transitionTimingFunction: {
         bounce: 'cubic-bezier(0.35, 0.12, 0.14, 1.42)',
       },
+      keyframes: {
+        'fade-in': {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        'slide-up': {
+          '0%': { transform: 'translateY(2rem)' },
+          '100%': { transform: 'translateY(0rem)' },
+        },
+      },
+      animation: {
+        'fade-in-ease': 'fade-in 0.3s ease both',
+        'slide-up-ease': 'slide-up 0.3s ease both',
+      },
     },
   },
   plugins: [],

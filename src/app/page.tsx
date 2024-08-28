@@ -1,12 +1,29 @@
-import Card from '@/components/card';
-import Main from '@/components/main';
-import SummaryCard from './summary';
+'use client';
+
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+
+import { getLocationPath } from '@/utils/helpers';
+import { getLatestLocation } from '@/utils/storage';
 
 export default function HomePage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const location = getLatestLocation();
+    router.push(getLocationPath(location));
+  }, []);
+
   return (
-    <Main>
-      <SummaryCard />
-      <Card title='5-day Forecast (3 Hours)'>Home</Card>
-    </Main>
+    <div className='absolute inset-0 grid content-center justify-center bg-slate-500'>
+      <Image
+        src='/logo.png'
+        alt='Open Weather logo'
+        width={200}
+        height={100}
+        priority
+      />
+    </div>
   );
 }
