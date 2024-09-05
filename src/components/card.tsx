@@ -1,23 +1,32 @@
 import cx from 'classnames';
+import { forwardRef } from 'react';
 
-export default function Card({
-  children,
-  title,
-  actionLabel,
-  actionCallback,
-  isLoaded = true,
-}: Readonly<{
+interface CardProps {
   children: React.ReactNode;
   title?: string;
   actionLabel?: string;
   actionCallback?(): void;
   isLoaded?: boolean;
-}>) {
+}
+
+export default forwardRef(function Card(
+  {
+    children,
+    title,
+    actionLabel,
+    actionCallback,
+    isLoaded = true,
+    ...props
+  }: Readonly<CardProps & React.HTMLProps<HTMLDivElement>>,
+  ref: React.ForwardedRef<HTMLDivElement>
+) {
   return (
     <div
       className={cx('group', {
         'is-loaded': isLoaded,
       })}
+      ref={ref}
+      {...props}
     >
       {title || (actionLabel && actionCallback) ? (
         <div
@@ -41,4 +50,4 @@ export default function Card({
       </div>
     </div>
   );
-}
+});

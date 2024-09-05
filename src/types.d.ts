@@ -25,6 +25,7 @@ interface BaseWeatherResponse {
     all: number;
   };
   dt: number;
+  dt_txt: string;
   main: {
     feels_like: number;
     grnd_level: number;
@@ -84,7 +85,6 @@ export interface ForecastWeatherResponse {
   cod: string;
   list: BaseWeatherResponse[] &
     {
-      dt_txt: string;
       pop: number;
       sys: {
         pod: string;
@@ -109,6 +109,7 @@ export interface ResponseError {
 export interface WeatherData {
   icon: string;
   description: string;
+  timezone: number;
   temperature: {
     value: number;
     unit: string;

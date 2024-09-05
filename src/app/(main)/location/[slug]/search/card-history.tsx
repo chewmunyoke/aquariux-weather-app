@@ -43,13 +43,18 @@ function HistoryListItem({
           <Link
             href={getLocationPath(location)}
             className={buttonClassNames}
+            aria-label={`Search weather for ${location}`}
             onClick={handleSearchClick}
           >
             <IcSearch width={20} height={20} />
           </Link>
         </div>
         <div className='z-10'>
-          <button className={buttonClassNames} onClick={handleDeleteClick}>
+          <button
+            className={buttonClassNames}
+            aria-label={`Delete ${location} from history`}
+            onClick={handleDeleteClick}
+          >
             <IcTrash width={20} height={20} />
           </button>
         </div>

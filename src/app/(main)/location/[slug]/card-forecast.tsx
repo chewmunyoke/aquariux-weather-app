@@ -13,6 +13,7 @@ import type {
   ForecastWeatherResponse,
   ResponseError,
 } from '@/types';
+import { getFormattedDate } from '@/utils/helpers';
 
 function WeatherListItem({
   time,
@@ -40,6 +41,14 @@ function WeatherListItem({
 export default function ForecastCard({
   location,
 }: Readonly<{ location: string }>) {
+  const dateOptions: Intl.DateTimeFormatOptions = {
+    month: 'long',
+    day: 'numeric',
+  };
+  const timeOptions: Intl.DateTimeFormatOptions = {
+    timeStyle: 'short',
+  };
+
   const [forecastData, setForecastData] = useState<ForecastData>();
   const [errorMessage, setErrorMessage] = useState<string>('');
 
@@ -49,22 +58,20 @@ export default function ForecastCard({
     if (res.ok) {
       const successData = data as ForecastWeatherResponse;
       const { list } = successData;
+      let timezoneOffset = successData.city.timezone * 1000;
+
       const obj: Record<string, any> = {};
-      const todayDate = new Intl.DateTimeFormat(undefined, {
-        month: 'long',
-        day: 'numeric',
-      }).format(new Date());
+      const todayDate = getFormattedDate(
+        dateOptions,
+        new Date(),
+        timezoneOffset
+      );
 
       list.forEach((item) => {
-        const dateObj = new Date(item.dt * 1000);
-        let date = new Intl.DateTimeFormat(undefined, {
-          month: 'long',
-          day: 'numeric',
-        }).format(dateObj);
+        const dateObj = new Date(item.dt_txt);
+        let date = getFormattedDate(dateOptions, dateObj);
         if (date === todayDate) date = 'Today';
-        const time = new Intl.DateTimeFormat(undefined, {
-          timeStyle: 'short',
-        }).format(dateObj);
+        const time = getFormattedDate(timeOptions, dateObj);
         if (!obj[date]) obj[date] = [];
         const objItem: ForecastDataItem = {
           time,

@@ -13,18 +13,21 @@ import type {
   ResponseError,
   WeatherData,
 } from '@/types';
-import { toTitleCase } from '@/utils/helpers';
+import { getFormattedDate, toTitleCase } from '@/utils/helpers';
+
+let intervalID: NodeJS.Timeout | undefined = undefined;
 
 export default function CurrentCard({
   location,
 }: Readonly<{ location: string }>) {
-  const todayDate = new Intl.DateTimeFormat(undefined, {
+  const dateOptions: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
-  }).format(new Date());
+  };
 
   const [weatherData, setWeatherData] = useState<WeatherData>();
+  const [dateTime, setDateTime] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   const fetchWeatherData = async () => {
@@ -32,9 +35,10 @@ export default function CurrentCard({
     const data = await res.json();
     if (res.ok) {
       const successData = data as CurrentWeatherResponse;
-      setWeatherData({
+      const weatherData: WeatherData = {
         icon: successData.weather[0].icon,
         description: toTitleCase(successData.weather[0].description),
+        timezone: successData.timezone * 1000,
         temperature: {
           value: Math.round(successData.main.temp),
           unit: '°C',
@@ -52,7 +56,11 @@ export default function CurrentCard({
           value: successData.visibility / 1000,
           unit: 'km',
         },
-      });
+      };
+      setWeatherData(weatherData);
+      setDateTime(
+        getFormattedDate(dateOptions, new Date(), weatherData.timezone)
+      );
     } else {
       const errorData = data as ResponseError;
       setErrorMessage(
@@ -62,7 +70,22 @@ export default function CurrentCard({
   };
 
   useEffect(() => {
+    clearInterval(intervalID);
+    if (weatherData) {
+      intervalID = setInterval(() => {
+        setDateTime(
+          getFormattedDate(dateOptions, new Date(), weatherData.timezone)
+        );
+      }, 1000);
+    }
+  }, [weatherData]);
+
+  useEffect(() => {
     fetchWeatherData();
+
+    return () => {
+      clearInterval(intervalID);
+    };
   }, []);
 
   return (
@@ -77,7 +100,7 @@ export default function CurrentCard({
         </div>
       ) : (
         <div className='grid grid-cols-[2fr_1fr_1fr_2fr] grid-rows-[repeat(5,auto)]'>
-          <h2 className='col-span-full text-lg'>{todayDate}</h2>
+          <h2 className='col-span-full text-lg'>{dateTime}</h2>
           <div className='col-span-2 row-span-2 self-center justify-self-center'>
             <WeatherIcon
               id={weatherData.icon}

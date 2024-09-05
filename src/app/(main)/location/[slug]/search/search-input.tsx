@@ -39,6 +39,8 @@ export default function SearchInput() {
       setErrorMessage(
         `Error ${errorData?.cod}: ${errorData?.message ?? 'An error occurred'}`
       );
+      setIsLoading(false);
+      inputRef.current?.focus();
     }
   };
 
@@ -61,17 +63,14 @@ export default function SearchInput() {
         <input
           className='flex-auto rounded-md border border-gray-300 px-4 shadow-md transition-colors read-only:cursor-wait read-only:bg-gray-100 read-only:text-gray-500 motion-reduce:transition-none'
           placeholder='Search country or city here...'
+          aria-label='Search country or city here'
           value={query}
           readOnly={isLoading}
           ref={inputRef}
           onChange={handleInputChange}
           onKeyDown={handleInputKeydown}
         ></input>
-        <Button
-          type='primary'
-          classNames='min-w-20'
-          onClick={handleButtonClick}
-        >
+        <Button className='min-w-20' type='primary' onClick={handleButtonClick}>
           {isLoading ? (
             <IcSpinner
               className='animate-spin'

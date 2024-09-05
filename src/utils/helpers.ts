@@ -7,6 +7,21 @@ export function toTitleCase(str: string): string {
   return words.join(' ');
 }
 
+export function getFormattedDate(
+  options: Intl.DateTimeFormatOptions,
+  date: Date,
+  timezoneOffset?: number
+): string {
+  const currentOffset = date.getTimezoneOffset() * 60 * 1000;
+  let offset = 0;
+  if (timezoneOffset && !isNaN(timezoneOffset)) {
+    offset += currentOffset + timezoneOffset;
+  }
+  return new Intl.DateTimeFormat(undefined, options).format(
+    date.getTime() + offset
+  );
+}
+
 export function getLocationFromSlug(slug: string): string {
   const location = decodeURIComponent(slug);
   const index = location.lastIndexOf(',');
